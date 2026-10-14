@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Stack Club — product boards</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --board:#fbfaf6; --ink:#1f2937; --muted:#6b7280; --blue:#1d4ed8; --red:#c2410c; --green:#15803d; --line:#d6d3cc; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--board); color:var(--ink); font-family:Inter,-apple-system,"Segoe UI",sans-serif; line-height:1.45; }
+  .wrap { max-width:860px; margin:0 auto; padding:32px 16px 64px; }
+  .hand { font-family:Caveat,cursive; }
+  h1 { font-family:Caveat,cursive; font-size:44px; margin:0; line-height:1; }
+  .sub { color:var(--muted); font-size:12px; margin:6px 0 20px; }
+  .sub a { color:var(--blue); }
+  .big { border:2.5px solid var(--ink); border-radius:14px; padding:14px 18px; font-size:17px; margin-bottom:26px; }
+  .big b { color:var(--red); }
+  .board { border:2px solid var(--ink); border-radius:14px; padding:16px 18px 18px; margin:0 0 22px; background:#fff; }
+  .board h2 { font-family:Caveat,cursive; font-size:32px; margin:0 0 10px; line-height:1; }
+  .board h2 .n { color:var(--blue); margin-right:6px; }
+  .note { font-family:Caveat,cursive; font-size:22px; color:var(--red); margin:10px 0 0; line-height:1.15; }
+  .bar { height:22px; border:2px solid var(--ink); border-radius:6px; display:flex; overflow:hidden; margin:7px 0; }
+  .bar span { display:flex; align-items:center; padding:0 8px; font-size:12px; font-weight:700; color:#fff; white-space:nowrap; }
+  .b1 { background:var(--blue); } .b2 { background:var(--red); } .b3 { background:var(--green); } .b4 { background:#9ca3af; }
+  .row { display:flex; align-items:center; gap:10px; margin:7px 0; font-size:14px; }
+  .row .lab { width:110px; flex-shrink:0; font-weight:600; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+  .col { border:2px dashed var(--line); border-radius:10px; padding:10px 12px; font-size:14px; }
+  .col h3 { margin:0 0 6px; font-size:14px; text-transform:uppercase; letter-spacing:.04em; }
+  .col ul { margin:0; padding-left:18px; } .col li { margin-bottom:4px; }
+  .vp { text-align:center; font-family:Caveat,cursive; font-size:28px; line-height:1.1; border:2.5px solid var(--blue); color:var(--blue); border-radius:12px; padding:10px; margin:4px 0 14px; }
+  .ins { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ins div { border-left:4px solid var(--red); padding:4px 10px; font-size:14px; }
+  .ins q { display:block; font-family:Caveat,cursive; font-size:22px; line-height:1.1; quotes:"\201C" "\201D"; }
+  .ins span { color:var(--muted); font-size:13px; }
+  video { width:100%; max-height:320px; background:#111; border-radius:10px; margin-top:10px; }
+  .cap { font-size:12px; color:var(--muted); margin:2px 0 8px; }
+  footer { font-size:11px; color:var(--muted); margin-top:20px; }
+  @media (max-width:640px){ .cols,.ins{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Stack by stack</h1>
+<p class="sub">The Stack Club, India · 10 active ads · snapshot 14 Oct 2026 · companion to <a href="index.html">teardown</a> + <a href="whiteboard.html">whiteboard</a></p>
+
+<div class="big">Same account, <b>three different fights</b>: Sleep Stack runs a proven control, Deep Rest fights for trust, Gut is a one-ad experiment.</div>
+
+<div class="board">
+  <h2><span class="n">1.</span>Sleep Stack — 7 ads</h2>
+  <div class="row"><div class="lab">Format</div><div class="bar" style="flex:1"><span class="b1" style="width:71%">Static 5</span><span class="b2" style="width:29%">Video 2</span></div></div>
+  <div class="vp">Fall asleep easier, stay asleep longer, wake clearer — no melatonin</div>
+  <div class="cols">
+    <div class="col">
+      <h3>Statics say (all 5, same copy)</h3>
+      <ul>
+        <li>Magnesium bisglycinate + glycine</li>
+        <li>"Stress mode → recovery mode"</li>
+        <li>"No sedatives. No melatonin dependency."</li>
+        <li>Running 7 weeks, visuals rotated</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Videos add (2 UGC, avg ~85s)</h3>
+      <ul>
+        <li>30-day ritual testimonial (#ad, 102s)</li>
+        <li>Repeat-user dorm review (67s)</li>
+        <li>Morning clarity = the payoff statics skip</li>
+      </ul>
+    </div>
+  </div>
+  <video src="assets/947813558368475_0.mp4" controls preload="metadata"></video>
+  <p class="cap">Longest video in the account: the #ad ritual testimonial.</p>
+  <div class="ins">
+    <div><q>I don't want to depend on melatonin.</q><span>→ the core of all 5 statics</span></div>
+    <div><q>I sleep 8 hours and still wake up wrecked.</q><span>→ quality over quantity (videos only)</span></div>
+  </div>
+  <p class="note">→ The machine: statics hold the line, videos recruit new believers. Nothing here is younger than 3 weeks except the 26 Sep visual.</p>
+</div>
+
+<div class="board">
+  <h2><span class="n">2.</span>Deep Rest — 2 ads</h2>
+  <div class="vp">Real magnesium that actually works — no hype</div>
+  <div class="cols">
+    <div class="col">
+      <h3>MetaMag video (65s, 23 Sep)</h3>
+      <ul>
+        <li>"Good sleep should not be a luxury"</li>
+        <li>"Genuine MetaMag", sleep architecture</li>
+        <li>Personal story: groggy → personality</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Hinglish video (59s, 26 Aug)</h3>
+      <ul>
+        <li>"Built For Outcomes, Not Hype"</li>
+        <li>"Kaafi simple hai" myth-busting</li>
+        <li>Longest-running video in the account</li>
+      </ul>
+    </div>
+  </div>
+  <video src="assets/966909969754365_0.mp4" controls preload="metadata"></video>
+  <p class="cap">The 49-day survivor: Hinglish industry exposé.</p>
+  <div class="ins">
+    <div><q>Magnesium didn't work for me.</q><span>→ "wrong form," not wrong idea</span></div>
+    <div><q>Supplement brands overhype everything.</q><span>→ anti-hype tone, plain talk</span></div>
+  </div>
+  <p class="note">→ Two pitches, one shelf: premium authenticity in English, plain-talk trust in Hinglish. The Hinglish one is winning on longevity.</p>
+</div>
+
+<div class="board">
+  <h2><span class="n">3.</span>Gut Defender — 1 ad</h2>
+  <div class="vp">Immunity is balance, not boosting</div>
+  <video src="assets/1985521325475393_0.mp4" controls preload="metadata"></video>
+  <p class="cap">60s lecture-style explainer with 3D gut render, no product-in-hand close.</p>
+  <div class="ins">
+    <div><q>Immunity boosters are nonsense.</q><span>→ "balance, not boost"</span></div>
+    <div><q>One ad, three weeks, no siblings.</q><span>→ hypothesis stage, not a line yet</span></div>
+  </div>
+  <p class="note">→ Watch for a second gut creative. Two ads = they're building a second leg; still one = it stays an experiment.</p>
+</div>
+
+<footer>Source: Meta Ad Library, page "The Stack" (thestack.club), India, 14 Oct 2026. Videos/images local in <code>assets/</code>. Spend hidden by Meta; longevity = the proxy.</footer>
+</div>
+</body>
+</html>

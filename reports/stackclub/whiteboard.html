@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Stack Club — Ad Whiteboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --board:#fbfaf6; --ink:#1f2937; --muted:#6b7280; --blue:#1d4ed8; --red:#c2410c; --green:#15803d; --line:#d6d3cc; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--board); color:var(--ink); font-family:Inter,-apple-system,"Segoe UI",sans-serif; line-height:1.45; }
+  .wrap { max-width:860px; margin:0 auto; padding:32px 16px 64px; }
+  .hand { font-family:Caveat,cursive; }
+  h1 { font-family:Caveat,cursive; font-size:44px; margin:0; line-height:1; }
+  .sub { color:var(--muted); font-size:12px; margin:6px 0 20px; }
+  .big { border:2.5px solid var(--ink); border-radius:14px; padding:14px 18px; font-size:17px; margin-bottom:26px; }
+  .big b { color:var(--red); }
+  .board { border:2px solid var(--ink); border-radius:14px; padding:16px 18px 18px; margin:0 0 22px; background:#fff; }
+  .board h2 { font-family:Caveat,cursive; font-size:32px; margin:0 0 10px; line-height:1; }
+  .board h2 .n { color:var(--blue); margin-right:6px; }
+  .note { font-family:Caveat,cursive; font-size:22px; color:var(--red); margin:10px 0 0; line-height:1.15; }
+  /* timeline */
+  .tl { display:flex; justify-content:space-between; position:relative; margin:18px 0 6px; }
+  .tl:before { content:""; position:absolute; left:4%; right:4%; top:11px; border-top:2.5px dashed var(--ink); }
+  .tl div { position:relative; text-align:center; flex:1; font-size:12px; }
+  .tl i { display:block; width:22px; height:22px; margin:0 auto 6px; border-radius:50%; background:#fff; border:2.5px solid var(--ink); }
+  .tl .hot i { background:var(--red); border-color:var(--red); }
+  .tl .quiet i { border-style:dashed; border-color:var(--muted); }
+  .tl b { display:block; font-size:13px; }
+  /* bars */
+  .row { display:flex; align-items:center; gap:10px; margin:7px 0; font-size:14px; }
+  .row .lab { width:120px; flex-shrink:0; font-weight:600; }
+  .bar { height:22px; border:2px solid var(--ink); border-radius:6px; display:flex; flex:1; overflow:hidden; }
+  .bar span { display:flex; align-items:center; padding:0 8px; font-size:12px; font-weight:700; color:#fff; white-space:nowrap; }
+  .b1 { background:var(--blue); } .b2 { background:var(--red); } .b3 { background:var(--green); } .b4 { background:#9ca3af; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+  .col { border:2px dashed var(--line); border-radius:10px; padding:10px 12px; font-size:14px; }
+  .col h3 { margin:0 0 6px; font-size:14px; text-transform:uppercase; letter-spacing:.04em; }
+  .col ul { margin:0; padding-left:18px; } .col li { margin-bottom:4px; }
+  /* hooks */
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  td { padding:8px 6px; border-bottom:1.5px dashed var(--line); vertical-align:top; }
+  td:first-child { font-style:italic; width:52%; }
+  .chip { display:inline-block; border:2px solid currentColor; border-radius:20px; padding:0 8px; font-size:11px; font-weight:700; text-transform:uppercase; }
+  .c-not { color:var(--red); } .c-proof { color:var(--blue); } .c-asp { color:var(--green); } .c-ing { color:var(--muted); }
+  /* value prop */
+  .vp { text-align:center; font-family:Caveat,cursive; font-size:30px; line-height:1.1; border:2.5px solid var(--blue); color:var(--blue); border-radius:12px; padding:10px; margin:4px 0 14px; }
+  .tweak { display:grid; grid-template-columns:1fr 26px 1.3fr; gap:6px 4px; align-items:center; font-size:14px; }
+  .tweak .ar { font-family:Caveat,cursive; font-size:24px; text-align:center; color:var(--muted); }
+  .tweak .who { font-weight:600; }
+  /* insights */
+  .ins { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ins div { border-left:4px solid var(--red); padding:4px 10px; font-size:14px; }
+  .ins q { display:block; font-family:Caveat,cursive; font-size:22px; line-height:1.1; quotes:"\201C" "\201D"; }
+  .ins span { color:var(--muted); font-size:13px; }
+  .gaps { border:2.5px dashed var(--green); border-radius:12px; padding:12px 16px; font-size:14px; }
+  .gaps h2 { font-family:Caveat,cursive; font-size:28px; margin:0 0 6px; color:var(--green); }
+  .gaps ul { margin:0; padding-left:18px; }
+  footer { font-size:11px; color:var(--muted); margin-top:20px; }
+  @media (max-width:640px){ .cols,.ins{grid-template-columns:1fr;} .row .lab{width:90px;} .tl div{font-size:10px;} .tl b{font-size:11px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>The Stack Club: ad whiteboard</h1>
+<p class="sub">Meta Ad Library, India · 10 active ads · snapshot 14 Oct 2026</p>
+
+<div class="big">They sell <b>one idea</b>: deep sleep without melatonin. They say it in <b>one static ad</b> that keeps getting new visuals, and back it with <b>five videos</b> that each try a different hook.</div>
+
+<!-- 1 -->
+<div class="board">
+  <h2><span class="n">1.</span>When they post</h2>
+  <div class="tl">
+    <div><i></i><b>26 Aug</b>static + video</div>
+    <div><i></i><b>1 Sep</b>static</div>
+    <div><i></i><b>13 Sep</b>static</div>
+    <div class="hot"><i></i><b>22–23 Sep</b>static + 4 videos</div>
+    <div><i></i><b>26 Sep</b>static</div>
+    <div class="quiet"><i></i><b>→ 14 Oct</b>nothing new</div>
+  </div>
+  <p class="note">→ A new static every ~10 days, plus one big video drop a month. 6 of 10 ads landed in one week (22–26 Sep), and nothing new has launched in 18 days.</p>
+</div>
+
+<!-- 2 -->
+<div class="board">
+  <h2><span class="n">2.</span>What they post</h2>
+  <div class="row"><div class="lab">Format</div><div class="bar"><span class="b1" style="width:50%">Static 5</span><span class="b2" style="width:50%">Video 5</span></div></div>
+  <div class="row"><div class="lab">Product</div><div class="bar"><span class="b1" style="width:70%">Sleep Stack 7</span><span class="b3" style="width:20%">Deep Rest 2</span><span class="b4" style="width:10%">Gut 1</span></div></div>
+  <div class="row"><div class="lab">Theme</div><div class="bar"><span class="b1" style="width:90%">Sleep 9</span><span class="b4" style="width:10%">Gut 1</span></div></div>
+  <div class="row"><div class="lab">Video type</div><div class="bar"><span class="b2" style="width:60%">Science explainer 3</span><span class="b3" style="width:40%">Personal review 2</span></div></div>
+
+  <div class="cols">
+    <div class="col">
+      <h3>Statics = repeat one message</h3>
+      <ul>
+        <li>Same copy on all 5: magnesium bisglycinate + glycine, "stress mode → recovery mode"</li>
+        <li>Only the visual changes</li>
+        <li>Message unchanged for 7 weeks</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Videos = explore new angles</h3>
+      <ul>
+        <li>5 videos, 5 different hooks</li>
+        <li>Avg <b>~71s</b> (59–102s), long enough to teach</li>
+        <li>1 of 5 in Hinglish, and it's the longest-running</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">→ Statics carry the message they've already proven. Videos test new hooks without risking it.</p>
+</div>
+
+<!-- 3 -->
+<div class="board">
+  <h2><span class="n">3.</span>The hooks</h2>
+  <table>
+    <tr><td>"Isn't just about more hours…" (opens on a research paper)</td><td><span class="chip c-not">Not X</span> <span class="chip c-proof">Proof</span></td></tr>
+    <tr><td>"Isn't about blindly boosting…"</td><td><span class="chip c-not">Not X</span></td></tr>
+    <tr><td>"Built for outcomes, not hype"</td><td><span class="chip c-not">Not X</span></td></tr>
+    <tr><td>"Made a video on this before"</td><td><span class="chip c-proof">Repeat user</span></td></tr>
+    <tr><td>"Good sleep should not be a luxury"</td><td><span class="chip c-asp">Aspiration</span></td></tr>
+    <tr><td>"Pure Magnesium + Glycine…" (all statics)</td><td><span class="chip c-ing">Ingredient</span></td></tr>
+  </table>
+  <p class="note">→ 3 of 5 video hooks start with "not X." They open by correcting a belief, then sell.</p>
+</div>
+
+<!-- 4 -->
+<div class="board">
+  <h2><span class="n">4.</span>The value prop, and how they tweak it</h2>
+  <div class="vp">Deep, natural sleep — no melatonin, no junk, backed by science</div>
+  <div class="tweak">
+    <div class="who">Skeptic</div><div class="ar">→</div><div>Research paper + "like a radiator" analogy</div>
+    <div class="who">Tried magnesium, no luck</div><div class="ar">→</div><div>"<i>Real</i> magnesium bisglycinate", the right form</div>
+    <div class="who">Sleeps enough, wakes groggy</div><div class="ar">→</div><div>"Not more hours", it's sleep quality</div>
+    <div class="who">Label reader</div><div class="ar">→</div><div>"No added sugar and junk"</div>
+    <div class="who">Wants a routine</div><div class="ar">→</div><div>"I made it my personality"</div>
+    <div class="who">Hindi-first buyer</div><div class="ar">→</div><div>Hinglish: "kaafi simple hai"</div>
+  </div>
+  <p class="note">→ The promise stays the same. Each ad swaps the proof to fit a different doubter.</p>
+</div>
+
+<!-- 5 -->
+<div class="board">
+  <h2><span class="n">5.</span>User insights they're chasing</h2>
+  <div class="ins">
+    <div><q>I'm exhausted, but I don't want to depend on melatonin.</q><span>→ the core of every static</span></div>
+    <div><q>I sleep 8 hours and still wake up wrecked.</q><span>→ quality over quantity</span></div>
+    <div><q>Magnesium didn't work for me.</q><span>→ "wrong form," not wrong idea</span></div>
+    <div><q>Supplement brands overhype everything.</q><span>→ anti-hype tone, cited studies</span></div>
+    <div><q>Good sleep feels like a luxury.</q><span>→ make it feel attainable</span></div>
+    <div><q>Immunity boosters are nonsense.</q><span>→ "balance, not boost" (gut test)</span></div>
+  </div>
+</div>
+
+<div class="gaps">
+  <h2>Gaps they've left open</h2>
+  <ul>
+    <li><b>No offer:</b> no price, trial or guarantee anywhere.</li>
+    <li><b>No morning:</b> only one ad mentions waking up clear.</li>
+    <li><b>Hinglish under-used:</b> it's their best survivor, yet only one exists.</li>
+  </ul>
+</div>
+
+<footer>Source: Meta Ad Library, page "The Stack" (thestack.club), India, 14 Oct 2026. Meta hides spend; "best survivor" means longest live.</footer>
+</div>
+</body>
+</html>
