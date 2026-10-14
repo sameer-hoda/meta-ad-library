@@ -1,0 +1,23 @@
+{
+  "brands": [
+    {
+      "brand_id": "the-stack-club",
+      "brand_name": "The Stack Club",
+      "page_ids": [],
+      "search_queries": ["The Stack Club"],
+      "country": "IN",
+      "ad_type_filter": "ALL",
+      "active_status_filter": "ALL",
+      "check_cadence": "daily",
+      "alert_rules": {
+        "new_launch_cluster": 3,
+        "reactivation": true,
+        "new_product_url": true
+      },
+      "created_at": "2026-10-14",
+      "last_run_id": null,
+      "last_status": null,
+      "notes": "Filter to page 'The Stack' (thestack.club); keyword search pulls lookalikes."
+    }
+  ]
+}

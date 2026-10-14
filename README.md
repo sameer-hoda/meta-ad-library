@@ -58,9 +58,14 @@ Rebuild it for another brand by repeating step 2 and adapting the template.
 
 ## Layout
 
-- `v1/app.py` — FastAPI service (`/health`, `/search`, `/insights`, `/nikshacks/run-info`)
+- `v1/app.py` — FastAPI service (`/health`, `/search`, `/insights`, `/coverage`, `/nikshacks/run-info`)
+- `v1/normalize.py` — versioned schema (v1) + tri-state status + UTC dates for all raw shapes
+- `v1/parse_ads.py` — CLI: GraphQL payloads → deduped normalized JSON + collection health
+- `v1/daily_check.py` — watchlist runner: scrape, snapshot, diff new/lost/reactivated
 - `v1/local_scrape.js` — conservative local scraper (403-tolerant GraphQL interception)
+- `v1/test_normalize.py` — 12 regression tests (`python -m unittest v1.test_normalize`)
 - `v1/requirements.txt`, `v1/.env.example`, `v1/README.md`
+- `watchlist.json` — tracked brands table; `ENHANCEMENTS.md` — build checklist + progress
 - `reports/stackclub/` — sample report: `index.html`, `ads_top10.json`, `assets/` (videos, images, frame strips)
 
 ## Notes and limits
