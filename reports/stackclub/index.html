@@ -3,147 +3,163 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Stack Club — ad teardown, 14 Oct 2026</title>
+<title>The Stack Club — whiteboard teardown</title>
 <style>
-  :root { --ink: #1c1917; --muted: #57534e; --line: #e7e5e4; --paper: #ffffff;
-          --wash: #f5f4f2; --accent: #0f766e; }
+  :root { --ink: #1c1917; --muted: #6b625c; --line: #e7e5e4; --paper: #ffffff;
+          --wash: #f5f4f2; --accent: #0f766e; --marker: #b45309; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink);
-         font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-         line-height: 1.6; }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 36px 24px 70px; }
-  h1 { font-family: Georgia, serif; font-size: 30px; margin: 0 0 6px; line-height: 1.2; }
-  .sub { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
-  .lede { font-size: 17px; border-top: 3px solid var(--ink); padding-top: 16px; margin: 0 0 8px; }
-  h2 { font-family: Georgia, serif; font-size: 21px; margin: 34px 0 8px;
-       padding-top: 16px; border-top: 1px solid var(--line); }
-  p, li { font-size: 15px; }
-  ul.tight li { margin-bottom: 6px; }
-  table.t { width: 100%; border-collapse: collapse; font-size: 14px; margin: 10px 0; }
-  table.t th, table.t td { text-align: left; padding: 8px 10px; vertical-align: top;
-                            border-bottom: 1px solid var(--line); }
-  table.t th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
-  .words { background: var(--wash); border: 1px solid var(--line); border-radius: 10px;
-           padding: 12px 16px; margin: 12px 0; font-size: 14px; }
-  .words b { display: inline-block; min-width: 92px; }
+         font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.55; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 32px 24px 60px; }
+  h1 { font-family: Georgia, serif; font-size: 28px; margin: 0; }
+  .sub { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .09em; color: var(--accent);
+       margin: 30px 0 10px; padding-top: 14px; border-top: 2px solid var(--ink); }
+  .bignum { display: flex; gap: 26px; flex-wrap: wrap; margin: 10px 0; }
+  .bignum div b { font-size: 30px; font-family: Georgia, serif; display: block; }
+  .bignum div span { font-size: 12px; color: var(--muted); }
+  /* cadence timeline */
+  .tl { position: relative; margin: 14px 0 4px 8px; padding-left: 22px;
+        border-left: 2px solid var(--ink); }
+  .tl div { position: relative; padding: 5px 0; font-size: 14px; }
+  .tl div::before { content: ""; position: absolute; left: -29px; top: 11px; width: 10px;
+                    height: 10px; border-radius: 50%; background: var(--paper);
+                    border: 2px solid var(--ink); }
+  .tl div.hot::before { background: var(--marker); border-color: var(--marker); }
+  .tl b { display: inline-block; min-width: 86px; }
+  /* proportion bars */
+  .bar { display: flex; height: 34px; border-radius: 8px; overflow: hidden;
+         border: 1px solid var(--line); margin: 8px 0 4px; font-size: 13px; font-weight: 600; }
+  .bar div { display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+  .bar .s { background: #134e4a; color: #fff; }
+  .bar .v { background: #5eead4; color: #134e4a; }
+  .bar .c { background: #fdba74; color: #7c2d12; }
+  .bar .e { background: #fed7aa; color: #7c2d12; }
+  .cap { font-size: 12px; color: var(--muted); margin: 0 0 6px; }
+  /* hook + insight rows */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line);
+         border-radius: 10px; margin: 8px 0; overflow: hidden; font-size: 14px; }
+  .row div { padding: 9px 13px; }
+  .row div:first-child { background: var(--wash); font-weight: 600; }
+  .row .arrow { color: var(--marker); font-weight: 700; }
+  ul.mini { margin: 8px 0; padding-left: 20px; font-size: 14px; }
+  ul.mini li { margin-bottom: 5px; }
   details.ad { border: 1px solid var(--line); border-radius: 10px; margin: 8px 0; }
-  details.ad summary { padding: 10px 14px; cursor: pointer; font-size: 14px; }
+  details.ad summary { padding: 9px 14px; cursor: pointer; font-size: 14px; }
   details.ad summary:hover { background: var(--wash); }
   details.ad .body { padding: 0 14px 14px; font-size: 14px; }
-  details.ad video { width: 100%; max-height: 380px; background: #0c0a09; border-radius: 8px; }
-  details.ad img.creative { width: 100%; max-height: 420px; object-fit: contain;
+  details.ad video { width: 100%; max-height: 360px; background: #0c0a09; border-radius: 8px; }
+  details.ad img.creative { width: 100%; max-height: 400px; object-fit: contain;
                             background: #0c0a09; border-radius: 8px; }
   blockquote { margin: 8px 0; padding-left: 12px; border-left: 2px solid var(--line);
                color: #44403c; white-space: pre-line; }
   code { background: var(--wash); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
-  footer { margin-top: 36px; padding-top: 12px; border-top: 1px solid var(--line);
-           font-size: 13px; color: var(--muted); }
-  footer a { color: var(--accent); }
-  @media (max-width: 720px) { h1 { font-size: 24px; } }
+  footer { margin-top: 30px; font-size: 12px; color: var(--muted);
+           border-top: 1px solid var(--line); padding-top: 10px; }
+  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } .row div:first-child { border-bottom: 1px solid var(--line); } }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<h1>The Stack Club — ad teardown</h1>
-<p class="sub">10 active Meta ads, India · captured 14 Oct 2026 · all 10 videos/images saved locally</p>
+<h1>The Stack Club — whiteboard</h1>
+<p class="sub">10 active Meta ads, India · 14 Oct 2026 · avg video length 71s</p>
 
-<p class="lede">They sell one thing on Meta right now: sleep. 7 of 10 ads push the Complete Sleep Stack with a message running unchanged for 7 weeks — magnesium + glycine moves you from “stress mode to recovery mode,” no melatonin. Around that control: 3 creator videos dropped in 48 hours (the new bet), one 7-week-old Hinglish explainer, one lone gut-health test. Zero discounts, zero urgency, zero price anywhere. All trust, all product page.</p>
-
-<h2>What's working, ranked</h2>
-<table class="t">
-  <tr><th>Bet</th><th>Evidence</th><th>Read</th></tr>
-  <tr><td>The control message</td><td>Same copy on 5 statics; new visual every ~10 days; oldest live 49 days</td><td>The winner. Everything else orbits it.</td></tr>
-  <tr><td>Creator surge</td><td>3 videos in 2 days (22–23 Sep) after weeks of statics</td><td>New production budget unlocked behind UGC. Watch for siblings.</td></tr>
-  <tr><td>Hinglish explainer</td><td>Oldest video still served, 49 days</td><td>Evergreen. Hindi-English quietly widens reach past English-only buyers.</td></tr>
-  <tr><td>Gut immunity probe</td><td>1 ad, 3 weeks, no siblings</td><td>Hypothesis stage. If it gets a second creative, they're diversifying off sleep.</td></tr>
-</table>
-
-<h2>Words they're using</h2>
-<div class="words">
-  <b>Mechanism</b> “recovery mode” · “sleep architecture” · “2-part system” · “immune biology” · “like a radiator”<br>
-  <b>Wedge</b> “No sedatives. No melatonin dependency.” · “genuine” · “globally trusted” · “not hype”<br>
-  <b>Payoff</b> “wake clearer” · “made it my personality” · “best mg out there”<br>
-  <b>Close</b> “kaafi simple hai” · “no added sugar and junk”<br>
-  <b>Missing</b> price, discount, trial, guarantee, urgency — none in 10 ads.
+<h2>Posting frequency</h2>
+<div class="bignum">
+  <div><b>10</b><span>live ads tracked</span></div>
+  <div><b>~1 / 5 days</b><span>steady pace since 26 Aug</span></div>
+  <div><b>5 in 48h</b><span>burst, 22–23 Sep</span></div>
 </div>
+<div class="tl">
+  <div><b>26 Aug</b> 2 live — control static + Hinglish explainer (both still running)</div>
+  <div><b>1 Sep</b> 1 live — control static, new visual</div>
+  <div><b>13 Sep</b> 1 live — control static, new visual</div>
+  <div class="hot"><b>22 Sep</b> 2 live — control static + first creator video</div>
+  <div class="hot"><b>23 Sep</b> 3 live — 2 creator videos + gut-health test</div>
+  <div><b>26 Sep</b> 1 live — control static, newest visual</div>
+</div>
+<p class="cap">Read: one control on drip-feed, then a 48-hour creator burst. That burst is the new budget.</p>
 
-<h2>Their template</h2>
-<ul class="tight">
-  <li><b>Hook, never brand-first:</b> confession (“groggy person”), bold claim (“best mg out there”), or proof on screen (research paper, product macro). Caption carries it sound-off.</li>
-  <li><b>Seconds 3–15 extend the premise:</b> one-week trial, radiator analogy, “made a video before.” No brand intro detour.</li>
-  <li><b>Middle is mechanism demo:</b> 60 Capsules macro, bottles held to camera, 3D gut render.</li>
-  <li><b>Close is identity or clean label,</b> not specs. Then Shop now → exact product page.</li>
-  <li><b>Static = frozen copy, rotating visual.</b> Video = one distinct hook each. 60–100s talking heads, fully captioned.</li>
+<h2>Content split</h2>
+<div class="bar"><div class="s" style="flex:5">5 static — 1 message</div><div class="v" style="flex:5">5 video — 5 hooks</div></div>
+<p class="cap">Statics: 100% the same anti-melatonin control copy, visuals rotated. Video: every film a different hook.</p>
+<div class="bar"><div class="c" style="flex:3">3 creator-shot</div><div class="e" style="flex:2">2 brand explainer</div></div>
+<p class="cap">Of the 5 videos: selfie story, dorm review, testimonial (creator) + science explainer, Hinglish myth-buster (brand).</p>
+
+<h2>Hooks — all 6</h2>
+<div class="row"><div>“Pure Magnesium + Glycine…” (5 statics)</div><div>Category promise. Same words, new skin.</div></div>
+<div class="row"><div>“Being a groggy person” → “made it my personality”</div><div>Confession → identity upgrade.</div></div>
+<div class="row"><div>Swiss research paper, fullscreen</div><div>Borrowed authority in frame one.</div></div>
+<div class="row"><div>“Isn't about blindly boosting”</div><div>Contrarian reframe of immunity.</div></div>
+<div class="row"><div>“Made a video on this before”</div><div>Repeat-user proof before any claim.</div></div>
+<div class="row"><div>“Built For Outcomes, Not Hype” (Hinglish)</div><div>Industry exposé + “kaafi simple hai”.</div></div>
+
+<h2>Value prop + how they bend it</h2>
+<p style="font-size:15px;margin:6px 0"><b>Core: sleep you can trust, without melatonin.</b> Every ad bends toward it differently:</p>
+<div class="row"><div>Mechanism bend</div><div>“recovery mode”, “sleep architecture”, “2-part system” — process, not mineral.</div></div>
+<div class="row"><div>Trust bend</div><div>“genuine”, “globally trusted”, papers, repeat users — answers fake-supplement fear.</div></div>
+<div class="row"><div>Identity bend</div><div>“my personality”, morning clarity — sells who you become.</div></div>
+<div class="row"><div>Language bend</div><div>Hinglish version reaches past English-only buyers.</div></div>
+<div class="row"><div>Category bend</div><div>Gut immunity = same trust formula pointed at a second shelf.</div></div>
+
+<h2>Insight they're chasing</h2>
+<div class="row"><div>Ad says <span class="arrow">→</span></div><div>Buyer hears <span class="arrow">→</span> insight</div></div>
+<div class="row"><div>“No melatonin dependency”</div><div>“Sleep aids scare me” → <b>fear of dependence</b></div></div>
+<div class="row"><div>“Genuine / globally trusted”</div><div>“Supplements feel fake” → <b>trust deficit</b></div></div>
+<div class="row"><div>“Groggy person → personality”</div><div>“Mornings ruin me” → <b>identity pain</b></div></div>
+<div class="row"><div>“Stop blindly boosting”</div><div>“Immunity advice is noise” → <b>expertise hunger</b></div></div>
+<div class="row"><div>“Kaafi simple hai”</div><div>“Health talk confuses me” → <b>simplicity craving</b></div></div>
+
+<h2>Steal / attack</h2>
+<ul class="mini">
+  <li><b>Steal:</b> one frozen control + rotating visuals on a ~10-day clock; hook rotates, on-ramp extends the premise; close on identity, land on the exact SKU.</li>
+  <li><b>Attack:</b> no price, trial, or guarantee anywhere; mornings unclaimed (only 1 ad mentions waking up); 70% rides one SKU.</li>
 </ul>
 
-<h2>Second-level reads</h2>
-<ul class="tight">
-  <li><b>The ~10-day refresh is a fatigue system, not testing.</b> Same words, new skin — they manage frequency with production.</li>
-  <li><b>60–100s runtimes are too long for cold prospecting.</b> These double as organic/retargeting assets; production cost is amortized across placements.</li>
-  <li><b>No offer + blank title on their best testimonial = lean team, confident product.</b> Speed is the way to beat them, not polish.</li>
-  <li><b>70% of the set is one SKU.</b> “Magnesium is magnesium” pressure hits their whole account in the same week.</li>
-  <li><b>Only one ad describes waking up.</b> Their story ends at bedtime; the morning is unclaimed.</li>
-</ul>
+<h2>All 10 ads (evidence)</h2>
 
-<h2>What to do about it</h2>
-<ul class="tight">
-  <li><b>Take the morning.</b> Own wake-up outcomes — energy, focus, first meeting. Their narrative stops at lights-out.</li>
-  <li><b>Fill the offer gap.</b> Trial, guarantee, starter pack — the risk-reversal they refuse to run.</li>
-  <li><b>Commoditize the mechanism</b> (“magnesium is magnesium” + price) or answer it with a better-named one. Don't fight on milligrams.</li>
-  <li><b>Match creator velocity.</b> 3 videos in 48h is their new pace; that cadence is the number to beat.</li>
-</ul>
-
-<h2>All 10 ads</h2>
-
-<details class="ad"><summary><b>26 Sep</b> · Sleep Stack · image — control copy, newest visual · <code>1465000198804887</code></summary><div class="body">
+<details class="ad"><summary><b>26 Sep</b> · Sleep Stack · image · <code>1465000198804887</code></summary><div class="body">
 <img class="creative" src="assets/1465000198804887_img.jpg" alt="Sleep Stack static" loading="lazy">
-<blockquote>Pure Magnesium + Glycine for Relaxation, Recovery and Rest.
-The Complete Sleep Stack combines highly bioavailable magnesium bisglycinate with pure glycine to support the shift from stress mode to recovery mode, helping you fall asleep easier, stay asleep longer, and wake clearer. No sedatives. No melatonin dependency. Just ingredients your body already understands.</blockquote></div></details>
+<blockquote>Pure Magnesium + Glycine for Relaxation, Recovery and Rest. The Complete Sleep Stack combines highly bioavailable magnesium bisglycinate with pure glycine to support the shift from stress mode to recovery mode. No sedatives. No melatonin dependency.</blockquote></div></details>
 
-<details class="ad"><summary><b>23 Sep</b> · Deep Rest MetaMag · video 65s — “Good sleep should not be a luxury” · <code>1630168665158439</code></summary><div class="body">
+<details class="ad"><summary><b>23 Sep</b> · MetaMag · video 65s · <code>1630168665158439</code></summary><div class="body">
 <video src="assets/1630168665158439_0.mp4" controls preload="metadata"></video>
-<blockquote>Order the Real Magnesium Bisglycinate today.
-Good sleep should not be a luxury. You can access deep rest, too with ease. Improve your sleep's natural architecture with our Genuine MetaMag Magnesium Bisglycinate.</blockquote></div></details>
+<blockquote>Order the Real Magnesium Bisglycinate today. Good sleep should not be a luxury. Improve your sleep's natural architecture with our Genuine MetaMag Magnesium Bisglycinate.</blockquote></div></details>
 
-<details class="ad"><summary><b>23 Sep</b> · Gut Defender · video 60s — “isn't about blindly boosting” · <code>1985521325475393</code></summary><div class="body">
+<details class="ad"><summary><b>23 Sep</b> · Gut Defender · video 60s · <code>1985521325475393</code></summary><div class="body">
 <video src="assets/1985521325475393_0.mp4" controls preload="metadata"></video>
-<blockquote>Try Gut Immunity Support today.
-Because better immunity isn't about blindly boosting your immune response. It's about supporting your immune biology.</blockquote></div></details>
+<blockquote>Try Gut Immunity Support today. Better immunity isn't about blindly boosting your immune response. It's about supporting your immune biology.</blockquote></div></details>
 
-<details class="ad"><summary><b>23 Sep</b> · Sleep Stack · video 102s — creator ritual, #ad · <code>947813558368475</code></summary><div class="body">
+<details class="ad"><summary><b>23 Sep</b> · Sleep Stack · video 102s, #ad · <code>947813558368475</code></summary><div class="body">
 <video src="assets/947813558368475_0.mp4" controls preload="metadata"></video>
-<blockquote>Good sleep isn't just about getting more hours, it's about giving your body the right conditions to truly switch off.
-Over the last month, I've made @thestack_club Complete Sleep Stack part of my nightly routine. The combination of pure glycine and magnesium helps me wind down naturally, without relying on sedatives or melatonin.
-I've noticed a real difference in how easily I fall asleep and how clear I feel the next morning. #ad</blockquote></div></details>
+<blockquote>I've made @thestack_club Complete Sleep Stack part of my nightly routine. Helps me wind down naturally, without sedatives or melatonin. Real difference in how easily I fall asleep and how clear I feel next morning. #ad</blockquote></div></details>
 
-<details class="ad"><summary><b>22 Sep</b> · Sleep Stack · video 67s — “best mg out there” · <code>1580599567147917</code></summary><div class="body">
+<details class="ad"><summary><b>22 Sep</b> · Sleep Stack · video 67s · <code>1580599567147917</code></summary><div class="body">
 <video src="assets/1580599567147917_0.mp4" controls preload="metadata"></video>
-<blockquote>Complete Sleep Stack by The Stack.
-I have made a video on this before as well. Absolutely the best mg out there.</blockquote></div></details>
+<blockquote>Complete Sleep Stack by The Stack — I have made a video on this before as well. Absolutely the best mg out there.</blockquote></div></details>
 
-<details class="ad"><summary><b>22 Sep</b> · Sleep Stack · image — control copy · <code>1070900472519264</code></summary><div class="body">
+<details class="ad"><summary><b>22 Sep</b> · Sleep Stack · image · <code>1070900472519264</code></summary><div class="body">
 <img class="creative" src="assets/1070900472519264_img.jpg" alt="Sleep Stack static" loading="lazy">
-<blockquote>Same control copy as 26 Sep card. <a href="assets/1070900472519264_img.jpg">Open image</a>.</blockquote></div></details>
+<blockquote>Control copy, new visual. <a href="assets/1070900472519264_img.jpg">Open image</a>.</blockquote></div></details>
 
-<details class="ad"><summary><b>13 Sep</b> · Sleep Stack · image — control copy · <code>3200415806826639</code></summary><div class="body">
+<details class="ad"><summary><b>13 Sep</b> · Sleep Stack · image · <code>3200415806826639</code></summary><div class="body">
 <img class="creative" src="assets/3200415806826639_img.jpg" alt="Sleep Stack static" loading="lazy">
-<blockquote>Same control copy as 26 Sep card. <a href="assets/3200415806826639_img.jpg">Open image</a>.</blockquote></div></details>
+<blockquote>Control copy, new visual. <a href="assets/3200415806826639_img.jpg">Open image</a>.</blockquote></div></details>
 
-<details class="ad"><summary><b>1 Sep</b> · Sleep Stack · image — control copy · <code>1606641784342353</code></summary><div class="body">
+<details class="ad"><summary><b>1 Sep</b> · Sleep Stack · image · <code>1606641784342353</code></summary><div class="body">
 <img class="creative" src="assets/1606641784342353_img.jpg" alt="Sleep Stack static" loading="lazy">
-<blockquote>Same control copy as 26 Sep card. <a href="assets/1606641784342353_img.jpg">Open image</a>.</blockquote></div></details>
+<blockquote>Control copy, new visual. <a href="assets/1606641784342353_img.jpg">Open image</a>.</blockquote></div></details>
 
-<details class="ad"><summary><b>26 Aug</b> · Deep Rest · video 59s, Hinglish — “Built For Outcomes, Not Hype” · <code>966909969754365</code></summary><div class="body">
+<details class="ad"><summary><b>26 Aug</b> · Deep Rest · video 59s, Hinglish · <code>966909969754365</code></summary><div class="body">
 <video src="assets/966909969754365_0.mp4" controls preload="metadata"></video>
-<blockquote>Built For Outcomes, Not Hype.
-Deep Rest is formulated with globally trusted magnesium bisglycinate and designed for one thing: delivering results.</blockquote></div></details>
+<blockquote>Built For Outcomes, Not Hype. Deep Rest is formulated with globally trusted magnesium bisglycinate and designed for one thing: delivering results.</blockquote></div></details>
 
-<details class="ad"><summary><b>26 Aug</b> · Sleep Stack · image — control copy, original · <code>1627675208772003</code></summary><div class="body">
+<details class="ad"><summary><b>26 Aug</b> · Sleep Stack · image, original control · <code>1627675208772003</code></summary><div class="body">
 <img class="creative" src="assets/1627675208772003_img.jpg" alt="Sleep Stack static" loading="lazy">
-<blockquote>Same control copy as 26 Sep card — the original. <a href="assets/1627675208772003_img.jpg">Open image</a>.</blockquote></div></details>
+<blockquote>Control copy, original visual. <a href="assets/1627675208772003_img.jpg">Open image</a>.</blockquote></div></details>
 
-<footer>Meta Ad Library, India, 14 Oct 2026 · page “The Stack”, links verified to thestack.club · spend/impressions aren't published for commercial ads, so traction reads come from how long creatives survive and how often they're refreshed — hypotheses, not measured ROAS. Raw records: <code>ads_top10.json</code>.</footer>
+<footer>Meta Ad Library, India, 14 Oct 2026 · page “The Stack”, links verified to thestack.club · traction reads from creative survival + refresh, not measured ROAS.</footer>
 </div>
 </body>
 </html>
