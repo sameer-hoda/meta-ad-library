@@ -25,12 +25,19 @@ from v1.normalize import (
 )
 
 
+EXPECTED_SHAPE = 1
+EXPECTED_PATH = ("data", "ad_library_main", "search_results_connection", "edges")
+
+
 def extract_collated(payloads: list) -> tuple[list[dict], int]:
     records, malformed = [], 0
     for body in payloads:
         try:
             data = json.loads(body) if isinstance(body, str) else body
-            edges = data["data"]["ad_library_main"]["search_results_connection"]["edges"]
+            node = data
+            for key in EXPECTED_PATH:
+                node = node[key]
+            edges = node
         except (ValueError, KeyError, TypeError):
             malformed += 1
             continue
@@ -75,12 +82,15 @@ def main(argv=None) -> int:
         field: sum(1 for r in normalized if not r.get(field))
         for field in ("page_name", "start_utc", "copy", "destination_url", "platforms")
     }
+    shape_mismatch = bool(payloads) and not raw_records
     health = {
         "run_id": run_id,
         "collected_at": collected_at,
         "query": args.query,
         "country_searched": args.country,
         "source": args.source,
+        "expected_shape": EXPECTED_SHAPE,
+        "shape_mismatch": shape_mismatch,
         "payloads": len(payloads),
         "raw_records": len(raw_records),
         "unique_ads": len(normalized),

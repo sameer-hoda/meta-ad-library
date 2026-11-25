@@ -1,4 +1,4 @@
-"""Simple Meta Ad Library search + insights API.
+"""Meta Ad Library search + insights API.
 
 Hybrid approach for India commercial competitor analysis:
 - GET /search uses the official ads_archive API when META_ACCESS_TOKEN is set.
@@ -7,21 +7,40 @@ Hybrid approach for India commercial competitor analysis:
 - GET /nikshacks/run-info explains how to run the NiksHacks Apify actor for IN.
 """
 
-import os
 from collections import Counter
 from datetime import datetime, timezone
 from typing import Any, Optional
 
 import httpx
-from fastapi import FastAPI, HTTPException
+import structlog
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
-from v1.normalize import active_ratio, normalize_record
+from v1.normalize import SCHEMA_VERSION, active_ratio, normalize_record
+from v1.settings import graph_base, settings
 
-GRAPH_VERSION = os.getenv("META_API_VERSION", "v21.0")
-GRAPH_BASE = f"https://graph.facebook.com/{GRAPH_VERSION}/ads_archive"
+log = structlog.get_logger("meta_ads")
 
-app = FastAPI(title="Meta Ad Library API (IN)", version="0.1.0")
+limiter = Limiter(key_func=get_remote_address)
+app = FastAPI(title="Meta Ad Library API (IN)", version="0.2.0")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+SEARCH_FIELDS = (
+    "id,page_id,page_name,ad_creative_bodies,"
+    "ad_snapshot_url,ad_delivery_start_time,"
+    "ad_delivery_stop_time,impressions,spend"
+)
+MAX_PAGES = 10
 
 
 @app.get("/health")
@@ -29,8 +48,36 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/ready")
+def ready() -> dict[str, Any]:
+    """Readiness: config state without leaking secrets."""
+    return {
+        "status": "ready",
+        "token_configured": bool(settings.meta_access_token.strip()),
+        "api_version": settings.meta_api_version,
+        "schema_version": SCHEMA_VERSION,
+    }
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, max=10),
+    retry=retry_if_exception_type(httpx.HTTPError),
+    reraise=True,
+)
+async def _graph_page(
+    client: httpx.AsyncClient, params: dict[str, Any]
+) -> dict[str, Any]:
+    resp = await client.get(graph_base(), params=params, timeout=30.0)
+    if resp.status_code in (429, 500, 502, 503, 504):
+        raise httpx.HTTPError(f"Graph retryable status {resp.status_code}")
+    return {"status": resp.status_code, "body": resp.text[:2000], "json": resp.json() if resp.status_code == 200 else {}}
+
+
 @app.get("/search")
-def search(
+@limiter.limit(settings.rate_limit_search)
+async def search(
+    request: Request,
     query: str,
     country: str = "IN",
     limit: int = 10,
@@ -40,8 +87,10 @@ def search(
 
     Requires META_ACCESS_TOKEN env var. Works best for political/EU ads;
     for IN commercial ads expect creatives without spend/impressions.
+    Follows cursor pagination up to ``limit`` (capped at 100 per call,
+    at most MAX_PAGES Graph pages).
     """
-    token = os.getenv("META_ACCESS_TOKEN", "").strip()
+    token = settings.meta_access_token.strip()
     if not token:
         raise HTTPException(
             status_code=501,
@@ -52,27 +101,51 @@ def search(
                 "NiksHacks Apify actor (see /nikshacks/run-info)."
             ),
         )
-    params = {
-        "search_terms": query,
-        "ad_reached_countries": country,
-        "ad_active_status": active_status,
-        "limit": min(max(limit, 1), 100),
-        "fields": (
-            "id,page_id,page_name,ad_creative_bodies,"
-            "ad_snapshot_url,ad_delivery_start_time,"
-            "ad_delivery_stop_time,impressions,spend"
-        ),
-        "access_token": token,
-    }
+    want = min(max(limit, 1), 100)
+    ads: list[dict[str, Any]] = []
+    after: Optional[str] = None
+    pages = 0
     try:
-        resp = httpx.get(GRAPH_BASE, params=params, timeout=30.0)
-    except httpx.HTTPError as exc:
+        async with httpx.AsyncClient() as client:
+            while len(ads) < want and pages < MAX_PAGES:
+                params: dict[str, Any] = {
+                    "search_terms": query,
+                    "ad_reached_countries": country,
+                    "ad_active_status": active_status,
+                    "limit": min(want - len(ads), 50),
+                    "fields": SEARCH_FIELDS,
+                    "access_token": token,
+                }
+                if after:
+                    params["after"] = after
+                try:
+                    page = await _graph_page(client, params)
+                except httpx.HTTPError as exc:
+                    raise HTTPException(
+                        status_code=502, detail=f"Graph request failed: {exc}"
+                    ) from exc
+                if page["status"] != 200:
+                    raise HTTPException(status_code=page["status"], detail=page["body"][:500])
+                data = page["json"]
+                ads.extend(data.get("data", []))
+                after = (data.get("paging", {}).get("cursors", {}) or {}).get("after")
+                pages += 1
+                if not after:
+                    break
+    except HTTPException:
+        raise
+    except Exception as exc:
         raise HTTPException(status_code=502, detail=f"Graph request failed: {exc}") from exc
-    if resp.status_code != 200:
-        raise HTTPException(status_code=resp.status_code, detail=resp.text[:500])
-    data = resp.json()
-    ads = data.get("data", [])
-    return {"query": query, "country": country, "count": len(ads), "ads": ads}
+    ads = ads[:want]
+    await log.ainfo("search", query=query, country=country, count=len(ads), pages=pages)
+    return {
+        "query": query,
+        "country": country,
+        "count": len(ads),
+        "pages": pages,
+        "next_cursor": after,
+        "ads": ads,
+    }
 
 
 class InsightsRequest(BaseModel):
@@ -100,7 +173,8 @@ def _parse_date(value: Any) -> Optional[datetime]:
 
 
 @app.post("/insights")
-def insights(req: InsightsRequest) -> dict[str, Any]:
+@limiter.limit(settings.rate_limit_insights)
+async def insights(request: Request, req: InsightsRequest) -> dict[str, Any]:
     """Aggregate competitor insights from any ad list.
 
     Every record is normalized to schema v1 first, so official API,
@@ -139,6 +213,7 @@ def insights(req: InsightsRequest) -> dict[str, Any]:
             "latest_start": max(starts).date().isoformat(),
         }
 
+    await log.ainfo("insights", records=total, skipped=skipped)
     return {
         "scope": {
             "records": total,
@@ -172,7 +247,7 @@ def coverage() -> dict[str, Any]:
             "political_or_issue_ads": "Full detail incl. spend/impression ranges",
             "eu_targeted_ads": "Reach, targeting, payer data",
             "in_commercial_ads": "Creatives + page only; NO spend/impressions/targeting",
-            "pagination": "Cursor paging supported; this service reads the first page",
+            "pagination": "Cursor paging followed server-side up to the requested limit",
         },
         "local_browser_scrape": {
             "needs": "Node 20+, Playwright Chromium, no token",
